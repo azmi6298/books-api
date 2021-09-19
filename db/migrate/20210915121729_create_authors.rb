@@ -9,7 +9,6 @@ class CreateAuthors < ActiveRecord::Migration[5.2]
       t.integer   :n_books
       t.text      :summary
       t.datetime  :born
-      t.json      :books
       t.datetime  :died
 
       t.timestamps

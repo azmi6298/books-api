@@ -33,6 +33,8 @@ GEM
       activemodel (= 5.2.6)
       activesupport (= 5.2.6)
       arel (>= 9.0)
+    activerecord-import (1.2.0)
+      activerecord (>= 3.2)
     activestorage (5.2.6)
       actionpack (= 5.2.6)
       activerecord (= 5.2.6)
@@ -47,6 +49,7 @@ GEM
       msgpack (~> 1.0)
     builder (3.2.4)
     byebug (11.1.3)
+    coderay (1.1.3)
     concurrent-ruby (1.1.9)
     crass (1.0.6)
     erubi (1.10.0)
@@ -75,6 +78,12 @@ GEM
       mini_portile2 (~> 2.6.1)
       racc (~> 1.4)
     pg (1.2.3)
+    pry (0.13.1)
+      coderay (~> 1.1)
+      method_source (~> 1.0)
+    pry-byebug (3.9.0)
+      byebug (~> 11.0)
+      pry (~> 0.13.0)
     puma (3.12.6)
     racc (1.5.2)
     rack (2.2.3)
@@ -132,10 +141,12 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activerecord-import
   bootsnap (>= 1.1.0)
   byebug
   listen (>= 3.0.5, < 3.2)
   pg (>= 0.18, < 2.0)
+  pry-byebug
   puma (~> 3.11)
   rails (~> 5.2.4, >= 5.2.4.3)
   spring

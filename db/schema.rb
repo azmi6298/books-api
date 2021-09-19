@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_15_121730) do
+ActiveRecord::Schema.define(version: 2021_09_19_074424) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,17 +24,42 @@ ActiveRecord::Schema.define(version: 2021_09_15_121730) do
     t.integer "n_books"
     t.text "summary"
     t.datetime "born"
-    t.json "books"
     t.datetime "died"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_authors_on_name"
   end
 
+  create_table "book_authors", force: :cascade do |t|
+    t.bigint "book_id"
+    t.bigint "author_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_id"], name: "index_book_authors_on_author_id"
+    t.index ["book_id"], name: "index_book_authors_on_book_id"
+  end
+
+  create_table "book_classes", force: :cascade do |t|
+    t.bigint "book_id"
+    t.bigint "class_book_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["book_id"], name: "index_book_classes_on_book_id"
+    t.index ["class_book_id"], name: "index_book_classes_on_class_book_id"
+  end
+
+  create_table "book_contents", force: :cascade do |t|
+    t.bigint "book_id"
+    t.bigint "author_id"
+    t.text "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_id"], name: "index_book_contents_on_author_id"
+    t.index ["book_id"], name: "index_book_contents_on_book_id"
+  end
+
   create_table "books", force: :cascade do |t|
     t.string "title"
-    t.integer "author_id"
-    t.string "author_name"
     t.string "content_name"
     t.string "isbn"
     t.string "original_title"
@@ -54,7 +79,6 @@ ActiveRecord::Schema.define(version: 2021_09_15_121730) do
     t.text "description"
     t.string "loc_class"
     t.json "gutenberg"
-    t.json "authors"
     t.integer "pages"
     t.string "language"
     t.string "isbn13"
@@ -63,7 +87,7 @@ ActiveRecord::Schema.define(version: 2021_09_15_121730) do
     t.string "cover"
     t.text "summary"
     t.boolean "content_cleaned"
-    t.json "classes"
+    t.text "book_classes"
     t.boolean "content_available"
     t.integer "n_authors"
     t.datetime "created_at", null: false
@@ -71,5 +95,43 @@ ActiveRecord::Schema.define(version: 2021_09_15_121730) do
     t.index ["title"], name: "index_books_on_title"
   end
 
-  add_foreign_key "books", "authors"
+  create_table "class_books", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "image_urls", force: :cascade do |t|
+    t.bigint "book_id"
+    t.string "url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["book_id"], name: "index_image_urls_on_book_id"
+  end
+
+  create_table "images", force: :cascade do |t|
+    t.bigint "book_id"
+    t.string "image_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["book_id"], name: "index_images_on_book_id"
+  end
+
+  create_table "similar_books", force: :cascade do |t|
+    t.bigint "book_id"
+    t.integer "similar_book_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["book_id"], name: "index_similar_books_on_book_id"
+  end
+
+  add_foreign_key "book_authors", "authors"
+  add_foreign_key "book_authors", "books"
+  add_foreign_key "book_classes", "books"
+  add_foreign_key "book_classes", "class_books"
+  add_foreign_key "book_contents", "authors"
+  add_foreign_key "book_contents", "books"
+  add_foreign_key "image_urls", "books"
+  add_foreign_key "images", "books"
+  add_foreign_key "similar_books", "books"
 end

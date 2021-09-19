@@ -1,3 +1,5 @@
-class Author < ApplicationRecord
-  has_many :books, dependent: :destroy
+class Author < ActiveRecord::Base
+  has_many :book_authors
+  has_many :books, through: :book_authors
+  has_many :book_contents
 end

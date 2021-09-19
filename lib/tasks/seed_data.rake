@@ -78,6 +78,7 @@ task seed_data: :environment do
     book.content_cleaned = book_data["content_cleaned"]
     book.content_available = book_data["content_available"]
     book.n_authors = book_data["n_authors"]
+    book.similar_books = {"similar_books": book_data["similar_books"]}
 
     book.save!
 
@@ -115,10 +116,10 @@ task seed_data: :environment do
 
     if book_data["images"].present?
       images = []
-      book_data["images"].each do |image|
+      book_data["images"].each do |image_url|
         image = Image.new
         image.book_id = book.id
-        image.image_url = image
+        image.image_url = image_url
         images << image
       end
       Image.import(images)
@@ -136,16 +137,16 @@ task seed_data: :environment do
     end
   end
 
-  books_data.each do |book_data|
-    similar_books = []
-    if book_data["similar_books"].present?
-      book_data["similar_books"].each do |title|
-        similar_book = SimilarBook.new
-        similar_book.book_id = book_data["id"]
-        similar_book.similar_book_id = Book.find_by(title: title).try(:id)
-        similar_books << similar_book
-      end
-      SimilarBook.import(similar_books)
-    end
-  end
+  # books_data.each do |book_data|
+  #   similar_books = []
+  #   if book_data["similar_books"].present?
+  #     book_data["similar_books"].each do |title|
+  #       similar_book = SimilarBook.new
+  #       similar_book.book_id = book_data["id"]
+  #       similar_book.similar_book_id = Book.find_by(title: title).try(:id)
+  #       similar_books << similar_book
+  #     end
+  #     SimilarBook.import(similar_books)
+  #   end
+  # end
 end

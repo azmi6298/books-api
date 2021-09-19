@@ -6,5 +6,5 @@ class Book < ActiveRecord::Base
   has_many :book_contents
   has_many :images
   has_many :image_urls
-  has_many :similar_books
+  # has_many :similar_books
 end

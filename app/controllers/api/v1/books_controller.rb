@@ -21,46 +21,7 @@ class Api::V1::BooksController < Api::V1::BaseController
     query = query.where('pages BETWEEN ? AND ?', min_page, max_page) if min_page.present? && max_page.present?
 
     result = query.page(page).per(per_page)
-
-    data = {
-      books: result.map do |book|
-        {
-          id: book.id,
-          title: book.title,
-          original_title: book.original_title,
-          authors: book.authors.map {|x| x.name},
-          pages: book.pages,
-          year: book.year,
-          content_name: book.content_name,
-          isbn: book.isbn,
-          images_urls: book.image_urls.map {|x| x.url},
-          language_code: book.language_code,
-          images: book.images.map {|x| x.image_url},
-          category: book.category,
-          plot: book.plot,
-          copyright: book.copyright,
-          wikipedia: book.wikipedia,
-          average_rating: book.average_rating,
-          rating_count: book.rating_count,
-          goodreads: book.goodreads,
-          similar_books: book.similar_books.values.flatten,
-          description: book.description,
-          loc_class: book.loc_class,
-          gutenberg: book.gutenberg,
-          language: book.language,
-          isbn13: book.isbn13,
-          countries: book.countries,
-          release_date: book.release_date,
-          cover: book.cover,
-          summary: book.summary,
-          classes: book.classes.map {|x| x.name},
-          content_cleaned: book.content_cleaned,
-          content_available: book.content_available,
-          contents: book.book_contents,
-          n_authors: book.n_authors
-        }
-      end
-    }
+    data = generate_result_data(result)
 
     render_success_data(data)
   end
@@ -70,45 +31,73 @@ class Api::V1::BooksController < Api::V1::BaseController
 
     begin
       book = Book.find(book_id)
-      data = {
-        id: book.id,
-        title: book.title,
-        original_title: book.original_title,
-        authors: book.authors.map {|x| x.name},
-        pages: book.pages,
-        year: book.year,
-        content_name: book.content_name,
-        isbn: book.isbn,
-        images_urls: book.image_urls.map {|x| x.url},
-        language_code: book.language_code,
-        images: book.images.map {|x| x.image_url},
-        category: book.category,
-        plot: book.plot,
-        copyright: book.copyright,
-        wikipedia: book.wikipedia,
-        average_rating: book.average_rating,
-        rating_count: book.rating_count,
-        goodreads: book.goodreads,
-        similar_books: book.similar_books.values.flatten,
-        description: book.description,
-        loc_class: book.loc_class,
-        gutenberg: book.gutenberg,
-        language: book.language,
-        isbn13: book.isbn13,
-        countries: book.countries,
-        release_date: book.release_date,
-        cover: book.cover,
-        summary: book.summary,
-        classes: book.classes.map {|x| x.name},
-        content_cleaned: book.content_cleaned,
-        content_available: book.content_available,
-        contents: book.book_contents,
-        n_authors: book.n_authors
-      }
-
+      data = result_structure(book)
       render_success_data(data)
     rescue => e
-      render_error_data(e.message)
+      render_error_data(e.message, :not_found)
     end
+  end
+
+  def find_similar
+    book_id = params[:id]
+
+    begin
+      book = Book.find(book_id)
+      data = {
+        id: book_id,
+        similar_books: book.similar_books.values.flatten
+      }
+      render_success_data(data)
+    rescue => e
+      render_error_data(e.message, :not_found)
+    end
+  end
+
+  private
+
+  def generate_result_data(result)
+    {
+      books: result.map do |book|
+        result_structure(book)
+      end
+    }
+  end
+
+  def result_structure(data)
+    {
+      id: data.id,
+      title: data.title,
+      original_title: data.original_title,
+      authors: data.authors.map {|x| {id: x.id, name: x.name}},
+      pages: data.pages,
+      year: data.year,
+      content_name: data.content_name,
+      isbn: data.isbn,
+      images_urls: data.image_urls.map {|x| x.url},
+      language_code: data.language_code,
+      images: data.images.map {|x| x.image_url},
+      category: data.category,
+      plot: data.plot,
+      copyright: data.copyright,
+      wikipedia: data.wikipedia,
+      average_rating: data.average_rating,
+      rating_count: data.rating_count,
+      goodreads: data.goodreads,
+      similar_books: data.similar_books.values.flatten,
+      description: data.description,
+      loc_class: data.loc_class,
+      gutenberg: data.gutenberg,
+      language: data.language,
+      isbn13: data.isbn13,
+      countries: data.countries,
+      release_date: data.release_date,
+      cover: data.cover,
+      summary: data.summary,
+      classes: data.classes.map {|x| x.name},
+      content_cleaned: data.content_cleaned,
+      content_available: data.content_available,
+      contents: data.book_contents,
+      n_authors: data.n_authors
+    }
   end
 end

@@ -3,27 +3,9 @@ class Api::V1::AuthorsController < Api::V1::BaseController
     page = params["page"] || 1
     per_page = params["per_page"] || 10
 
-    query = Author.all
-    result = query.page(page).per(per_page)
+    result = Author.page(page).per(per_page)
 
-    data = {
-      authors: result.map do |author|
-        {
-          id: author.id,
-          bio: author.bio,
-          name: author.name,
-          died: author.died,
-          countries: author.countries,
-          gender: author.gender,
-          wikipedia: author.wikipedia,
-          n_books: author.n_books,
-          summary: author.summary,
-          born: author.born,
-          books: author.books.map {|x| x.id}
-        }
-      end
-    }
-
+    data = generate_result_data(result)
     render_success_data(data)
   end
 
@@ -32,23 +14,36 @@ class Api::V1::AuthorsController < Api::V1::BaseController
 
     begin
       author = Author.find(author_id)
-      data = {
-          id: author.id,
-          bio: author.bio,
-          name: author.name,
-          died: author.died,
-          countries: author.countries,
-          gender: author.gender,
-          wikipedia: author.wikipedia,
-          n_books: author.n_books,
-          summary: author.summary,
-          born: author.born,
-          books: author.books.map {|x| x.id}
-      }
-
+      data = result_structure(author)
       render_success_data(data)
     rescue => e
-      render_error_data(e.message)
+      render_error_data(e.message, :not_found)
     end
+  end
+
+  private
+
+  def generate_result_data(result)
+    {
+      authors: result.map do |author|
+        result_structure(author)
+      end
+    }
+  end
+
+  def result_structure(data)
+    {
+      id: data.id,
+      bio: data.bio,
+      name: data.name,
+      died: data.died,
+      countries: data.countries,
+      gender: data.gender,
+      wikipedia: data.wikipedia,
+      n_books: data.n_books,
+      summary: data.summary,
+      born: data.born,
+      books: data.books.map {|x| {id: x.id, name: x.name}}
+    }
   end
 end

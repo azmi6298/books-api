@@ -3,10 +3,10 @@ class Api::V1::BaseController < ApplicationController
     render json: data, status: :ok
   end
 
-  def render_error_data(message)
+  def render_error_data(message, status)
     payload = {
       error: message
     }
-    render json: payload, status: :not_found
+    render json: payload, status: status
   end
 end

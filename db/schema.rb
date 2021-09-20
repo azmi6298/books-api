@@ -117,14 +117,6 @@ ActiveRecord::Schema.define(version: 2021_09_19_074424) do
     t.index ["book_id"], name: "index_images_on_book_id"
   end
 
-  create_table "similar_books", force: :cascade do |t|
-    t.bigint "book_id"
-    t.integer "similar_book_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["book_id"], name: "index_similar_books_on_book_id"
-  end
-
   add_foreign_key "book_authors", "authors"
   add_foreign_key "book_authors", "books"
   add_foreign_key "book_classes", "books"
@@ -133,5 +125,4 @@ ActiveRecord::Schema.define(version: 2021_09_19_074424) do
   add_foreign_key "book_contents", "books"
   add_foreign_key "image_urls", "books"
   add_foreign_key "images", "books"
-  add_foreign_key "similar_books", "books"
 end

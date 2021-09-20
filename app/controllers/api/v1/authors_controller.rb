@@ -43,7 +43,7 @@ class Api::V1::AuthorsController < Api::V1::BaseController
       n_books: data.n_books,
       summary: data.summary,
       born: data.born,
-      books: data.books.map {|x| {id: x.id, name: x.name}}
+      books: data.books.map {|x| {id: x.id, title: x.title}}
     }
   end
 end

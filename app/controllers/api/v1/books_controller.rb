@@ -20,7 +20,7 @@ class Api::V1::BooksController < Api::V1::BaseController
     query = query.where('pages <= ?', max_page) if max_page.present?
     query = query.where('pages BETWEEN ? AND ?', min_page, max_page) if min_page.present? && max_page.present?
 
-    result = query.page(page).per(per_page)
+    result = query.order(:id).page(page).per(per_page)
     data = generate_result_data(result)
 
     render_success_data(data)

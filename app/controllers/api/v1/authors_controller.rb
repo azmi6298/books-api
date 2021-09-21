@@ -3,7 +3,7 @@ class Api::V1::AuthorsController < Api::V1::BaseController
     page = params["page"] || 1
     per_page = params["per_page"] || 10
 
-    result = Author.page(page).per(per_page)
+    result = Author.order(:id).page(page).per(per_page)
 
     data = generate_result_data(result)
     render_success_data(data)
